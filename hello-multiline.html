@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="helloSingleLine">
+<html ng-app="helloMultiLine">
 <head>
 	<title>Hello... Realtime collaboration editor</title>
 
@@ -11,308 +11,27 @@
 		padding: 0; 
 	}
 
-	#checkselectionwidth,
-	#checkselectionoffset,
-	[hello] {
-
-		
-		width: 600px;
-		line-height: 24px;
-		padding: 10px;
-		box-sizing: border-box;
-		font-family: verdana;
-		font-size: 14px;
-		margin:0;
-		height: 44px;
-		overflow: hidden;
-		margin-top: 30px;
-	}
-
-	#checkselectionoffset,
-	#checkselectionwidth {
-
-		background: #ff00ff;
-		padding: 0;
-		margin: 0; 
-		visibility: hidden;
-	}
-
-	[hello] div:first-child {
-
-		z-index: 2;
-		position: relative;
-	}
-
-	.selection {
-
-		height:24px;
-		width: 0;
-		background: #86be40;
-		opacity: 0.35;
-		position: relative;
-		z-index: 0;
-	}
-
-	.selection.blue {
-
-		background: #54bed3;
-	}
-
-	.selection.pink {
-
-		background: #f062a4;
-	}
-
-	.selection.yellow {
-
-		background: #ffd33a;
-	}
-
-	#move {
-
 	
-		
-		padding: 0;
-		margin: 0; 
-	}
-
-	.hide {
-
-		display: none;
-	}
-
-	.cursor {
-		opacity: 0;
-	    left: 309px;
-	    top: 43px;
-	    cursor: text;
-	    position: absolute;
-	    z-index: 24;
-	    font: normal 13px arial,sans-serif;
-	}
-
-	.cursor .cursor-caret {
-
-		border-left: 2px solid;
-		border-color: #86be40;
-	    height: 13.6px;
-	    position: absolute;
-	    width: 0px;
-	    font-size: 0;
-	}
-
-	.cursor.green,
-	.cursor.blue,
-	.cursor.pink,
-	.cursor.yellow {
-
-		opacity: 1;
-	}
-
-	.cursor.blue  .cursor-caret {
-
-		border-color: #54bed3;
-	}
-
-	.cursor.pink  .cursor-caret {
-
-		border-color: #f062a4;
-	}
-
-	.cursor.yellow  .cursor-caret {
-
-		border-color: #ffd33a;
-	}
-
-
-	.cursor .cursor-top {
-	    opacity: 1;
-	    background-color: #86be40;
-	    position: absolute;
-	    width: 6px;
-	    left: -2px;
-	    top: -2px;
-	    height: 6px;
-	    font-size: 0;
-	}
-
-
-	.cursor.blue  .cursor-top {
-
-		background-color: #54bed3;
-	}
-
-	.cursor.pink  .cursor-top {
-
-		background-color: #f062a4;
-	}
-
-	.cursor.yellow  .cursor-top {
-
-		background-color: #ffd33a;
-	}
-
-
-	.cursor .cursor-name {
-	
-		opacity: 0;
-	  
-	    background-color: #86be40;
-	    position: absolute;
-	    font-size: 10px;
-	    color: #fff;
-	    top: -14px;
-	    left: -2px;
-	    padding: 2px;
-	    white-space: nowrap;
-	    transition: 0.3s opacity linear;
-	}
-
-	.cursor .cursor-name.show {
-
-		opacity: 1;
-	}
-
-	.cursor.blue  .cursor-name {
-
-		background: #54bed3;
-	}
-
-	.cursor.pink  .cursor-name {
-
-		background: #f062a4;
-	}
-
-	.cursor.yellow  .cursor-name {
-
-		background: #ffd33a;
-	}
-
 
 
 
 	</style>
 </head>
-<body  ng-controller="helloSingleLineCtrl">
+<body  ng-controller="helloMultiLineCtrl">
 
-
-	<div ng-repeat="caret in connectedClients" class="cursor {{caret.color}}"  style="left:{{caret.caretPosition}}px;">
-		<div class="cursor-caret"></div>
-		<div class="cursor-top"></div>
-		<div ng-class="[{ 'show' : caret.show==true }]" class="cursor-name">{{caret.name || 'Untitled'}}</div>
-	</div>
-
-	<div hello ng-click="selectRange()">
-		<div id="bla">Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. </div>
-		<div ng-repeat="selection in connectedClients" class="selection {{selection.color}}" style="left:{{selection.left}}px; width:{{selection.width}}px; top:-{{($index+1)*24}}px;"></div>
-	</div>
-
-
-	<span id="checkselectionwidth"></span>
-	<span id="checkselectionoffset"></span>
- 
-	<br />
-	<!-- dont remove br -->
-
-	<p>
-		<label>Pick a color: </label>
-		<select id="color">
-			<option value="green">Green</option>
-			<option value="blue">Blue</option>
-			<option value="pink">Pink</option>
-			<option value="yellow">yellow</option>
-		</select>	
-
-		<label>(Nick) name: </label>
-		<input ng-model="name" type="text" />
-	</p>
-	
+Hello!?
 
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-	<script src='/socket.io/socket.io.js'></script>
+
 
 	<script type="text/javascript">
 
-		var app = angular.module('helloSingleLine', [])
-  			app.controller('helloSingleLineCtrl', function( $scope, $timeout ) {
+		var app = angular.module('helloMultiLine', [])
+  			app.controller('helloMultiLineCtrl', function( $scope, $timeout ) {
    
-				$scope.connectedClients = [];
+				console.log("Aaa")
 
-				var socketId =null
-				var timers = [];
-
-
-			   	var socket = io();
-		            socket.on('connectedClients', function(data) {
-
-						$scope.connectedClients = data.connectedClients;
-
-    					$scope.$apply();
-
-						console.log('connectedClients', $scope.connectedClients);
-		            });
-
-
-		             socket.on('getSocketId', function(data) {
-		              
-						socketId = data.socketId;
-
-						console.log('getSocketId', socketId);
-		            });
-
-
-		            socket.on('getSelectionRange',  function(data) {
-
-		            	 for (var i = $scope.connectedClients.length - 1; i >= 0; i--) {
-
-		            	 	  if( $scope.connectedClients[i].socketId == data.socketId) {
-									
-		            	 	  		data.caretPosition = parseInt(data.left, 10) + parseInt(data.width, 10) + 9;
-									data.show = true;
-
-		            	 	  		if(timers[i]) {
-
-		            	 	  			$timeout.cancel(timers[i]);
-		            	 	  		}
-
-									timers[i] = $timeout( function() {
-
-										data.show = false;
-									}, 4000);
-
-
-									$scope.connectedClients[i] = data;
-
-									$scope.$apply();
-		            	 	  	break;
-		            	 	  }
-		            	 }
-		            });
-
-		          
-			$scope.selectRange = function( event ) {
-
-				var selObj = window.getSelection(); 	
-				var checkselectionwidth = document.querySelector( '#checkselectionwidth' );
-				var checkselectionoffset = document.querySelector( '#checkselectionoffset' );
-				var bla = document.querySelector( '#bla' );
-				var color = document.querySelector( '#color' );
-
-				angular.element( checkselectionwidth ).html(selObj.toString());
-				angular.element( checkselectionoffset ).html(angular.element( bla ).html().toString().substring(0, selObj.getRangeAt(0).startOffset));
-
-	
-				socket.emit('setSelectionRange', {
-
-				 	'color': angular.element( color ).val() ||  'green',
-				 	'left': checkselectionoffset.offsetWidth, 
-					'width': checkselectionwidth.offsetWidth,
-					'socketId' : socketId,
-					'name' : $scope.name
-				 });
-			};
-
-	});
+			});
 
 
 	</script>
