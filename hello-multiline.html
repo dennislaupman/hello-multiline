@@ -30,13 +30,11 @@
 	}
 	
 	
-
-
 	</style>
 </head>
 <body  ng-controller="helloMultiLineCtrl">
 
-	<div hello>
+	<div hello ng-click="selectRange()">
 
 		<div>
 			<div>Lorem Ipsum is slechts een proeftekst uit het drukkerij- en </div>
@@ -58,12 +56,60 @@
 
 	<script type="text/javascript">
 
+		var getRowNumbers = function (startContainer, endContainer) {
+
+			var counter = 0, start =0, end = 0;
+			var container = document.querySelector( '[hello] div' );
+
+			for (var i = 0; i <container.childNodes.length; i++) {
+
+				//Skipt text nodex
+				if(container.childNodes[i].nodeType === 3) {
+
+					continue;
+				}
+
+				//Get start line
+				if( container.childNodes[i] == startContainer.parentNode ) {
+
+					start = counter;
+				}
+				//Get end line
+				if( container.childNodes[i] == endContainer.parentNode ) {
+
+					end = counter;
+				}
+
+
+				counter++;
+			};
+
+			console.log( start, end )
+		}
+
 		var app = angular.module('helloMultiLine', [])
   			app.controller('helloMultiLineCtrl', function( $scope, $timeout ) {
-   
-				console.log("Hello!?");
+
+				$scope.selectRange = function( event ) {
+
+					var selObj = window.getSelection();
+
+					var startOffset = selObj.getRangeAt(0).startOffset;
+					var endOffset = selObj.getRangeAt(0).endOffset;
+
+					var startOffsetContainer = selObj.getRangeAt(0).startContainer;
+					var endOffsetContainer = selObj.getRangeAt(0).endContainer;
+
+					// console.log('startOffset', startOffset);
+					// console.log('endOffset', endOffset);
+					// console.log('startOffsetContainer', startOffsetContainer);
+					// console.log('endOffsetContainer', endOffsetContainer);
+
+					getRowNumbers(startOffsetContainer, endOffsetContainer);
+				}
 
 			});
+
 
 
 	</script>
