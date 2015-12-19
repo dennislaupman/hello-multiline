@@ -81,7 +81,7 @@
 				counter++;
 			};
 
-			console.log( start, end )
+			return { start: start, end: end };
 		}
 
 		var app = angular.module('helloMultiLine', [])
@@ -99,10 +99,14 @@
 
 					// console.log('startOffset', startOffset);
 					// console.log('endOffset', endOffset);
-					// console.log('startOffsetContainer', startOffsetContainer);
-					// console.log('endOffsetContainer', endOffsetContainer);
 
-					getRowNumbers(startOffsetContainer, endOffsetContainer);
+					var lineNumbers = getRowNumbers(startOffsetContainer, endOffsetContainer);
+
+					console.clear();
+					console.log('startLine', lineNumbers.start);
+					console.log('startOffset', startOffset);
+					console.log('endLine', lineNumbers.end);
+					console.log('endOffset', endOffset);
 				}
 
 			});
