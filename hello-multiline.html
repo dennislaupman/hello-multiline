@@ -89,8 +89,9 @@
 		<div>
 			<div class="line" ng-repeat="line in lines"><div class="content">{{line.content}}</div>
 				<div 
-					class="selection {{selection.color}}" 
-					style="left:{{line.selection.left}}; width:{{line.selection.width}};">
+					ng-repeat="userSelection in line.selection" 
+					class="selection {{userSelection.color}}" 
+					style="left:{{userSelection.left}}; width:{{userSelection.width}};">
 				</div>
 			</div>
 		</div>
@@ -102,6 +103,20 @@
 
 	<br />
 	<!-- dont remove br -->
+
+	<p>
+		<label>Pick a color: </label>
+		<select id="color">
+			<option value="green">Green</option>
+			<option value="blue">Blue</option>
+			<option value="pink">Pink</option>
+			<option value="yellow">yellow</option>
+		</select>	
+
+		<label>(Nick) name: </label>
+		<input ng-model="name" type="text" />
+	</p>
+	
 
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
 	<script src='/socket.io/socket.io.js'></script>
@@ -183,59 +198,76 @@
 
 		            	var checkSelectionWidth = null;
 
-		            	 for (var i = $scope.connectedClients.length - 1; i >= 0; i--) {
+		            	for (var i = $scope.connectedClients.length - 1; i >= 0; i--) {
 
-		            	 	  if( $scope.connectedClients[i].socketId == data.socketId) {
+						
+		            	 	if( $scope.connectedClients[i].socketId == data.socketId) {
 
-			            	 	  	for (var ii = 0; ii < $scope.lines.length; ii++ ) {
+		            	 		data.show = true;
+								$scope.connectedClients[i] = data;
 
-			            	 	  		//Declarations
-										$scope.lines[ii].selection = {};
+		            	 	  	for (var ii = 0; ii < $scope.lines.length; ii++ ) {
 
-										var startAt = parseInt(data.startLine, 10),
-											startOffset = parseInt(data.startOffset, 10),
-											endsAt = parseInt(data.endLine, 10),
-											endOffset = parseInt(data.endOffset, 10);
+		            	 	  		//Declarations
+		            	 	  		if( !$scope.lines[ii].selection ){
+
+										$scope.lines[ii].selection = [];	
+		            	 	  			for (var iii = $scope.connectedClients.length - 1; iii >= 0; iii--) {
+
+		            	 	  				$scope.lines[ii].selection.push({ });
+		            	 	  			};
+		            	 	  			
+		            	 	  		}
+
+		            	
+								
+									var startAt = parseInt(data.startLine, 10),
+										startOffset = parseInt(data.startOffset, 10),
+										endsAt = parseInt(data.endLine, 10),
+										endOffset = parseInt(data.endOffset, 10);
+
+	
+									//Set width
+									if( ii === startAt && ii === endsAt ) {	
+
+										$scope.lines[ii].selection[i].width = (endOffset-startOffset)+'px';
+									} else if( ii === startAt ) {
+									
+										$scope.lines[ii].selection[i].width = ($scope.lines[ii].width-startOffset)+'px';
+									} else if( ii === endsAt ) {
+
+										$scope.lines[ii].selection[i].width = endOffset+'px';
+									} else if( ii >= startAt && ii <= endsAt ) {
+
+		            	 	  			$scope.lines[ii].selection[i].width = $scope.lines[ii].width+'px';
+
+		            	 	  		} else {
 
 
-										//Set width
-										if( ii === startAt && ii === endsAt ) {	
 
-											$scope.lines[ii].selection.width = (endOffset-startOffset)+'px';
-										} else if( ii === startAt ) {
-										
-											$scope.lines[ii].selection.width = ($scope.lines[ii].width-startOffset)+'px';
-										} else if( ii === endsAt ) {
+		            	 	  			$scope.lines[ii].selection[i].width = 0+'%';
+		            	 	  		}
 
-											$scope.lines[ii].selection.width = endOffset+'px';
-										} else if( ii >= startAt && ii <= endsAt ) {
+		            	 	  		//Set startOffset
+		            	 	  		if( ii === startAt ) {
 
-			            	 	  			$scope.lines[ii].selection.width = $scope.lines[ii].width+'px';
+		            	 	  			$scope.lines[ii].selection[i].left = startOffset+'px';
+									} else {
 
-			            	 	  		} else {
+		            	 	  			$scope.lines[ii].selection[i].left = 0+'px';
+		            	 	  		}
 
-			            	 	  			$scope.lines[ii].selection.width = 0+'%';
+		            	 	  	};
 
-			            	 	  		}
+							$scope.$apply();
 
-			            	 	  		//Set startOffset
-			            	 	  		if( ii === startAt ) {
+	            	 	  	break;
+	            	 	  }
+	            	 }
+	          
+	            });
 
-			            	 	  			$scope.lines[ii].selection.left = startOffset+'px';
-										} else {
-
-			            	 	  			$scope.lines[ii].selection.left = 0+'px';
-			            	 	  		}
-			            	 	  	};
-
-		            	 	  	break;
-		            	 	  }
-		            	 }
-
-		            	$scope.$apply();
-		            });
-
-  				
+				
   				//Set selection
 				$scope.selectRange = function( event ) {
 
@@ -251,6 +283,8 @@
 
 					var checkStartSelectionOffset = document.querySelector( '#checkStartSelectionOffset' );
 					var checkEndSelectionOffset = document.querySelector( '#checkEndSelectionOffset' );
+
+					var color = document.querySelector( '#color' );
 					
 
 
@@ -285,9 +319,8 @@
 
 					socket.emit('setSelectionRange', {
 
-					 	'color': 'green',
+					 	'color': angular.element( color ).val() ||  'green',
 					 	'startLine': lineNumbers.start, 
-				
 						'startOffset': checkStartSelectionOffset.offsetWidth,
 						'endLine': lineNumbers.end, 
 						'endOffset': checkEndSelectionOffset.offsetWidth,
