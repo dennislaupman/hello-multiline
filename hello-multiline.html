@@ -74,7 +74,7 @@
 	</div>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-
+	<script src='/socket.io/socket.io.js'></script>
 
 	<script type="text/javascript">
 
@@ -123,7 +123,49 @@
 					'publishing software zoals Aldus PageMaker die versies van Lorem',
 					'Ipsum bevatten.'		
   				];
-  			
+
+  				//socket connection
+  				$scope.connectedClients = [];
+
+				var socketId =null
+				var timers = [];
+
+
+			   	var socket = io();
+		            socket.on('connectedClients', function(data) {
+
+						$scope.connectedClients = data.connectedClients;
+
+    					$scope.$apply();
+
+						console.log('connectedClients', $scope.connectedClients);
+		            });
+
+
+		             socket.on('getSocketId', function(data) {
+		              
+						socketId = data.socketId;
+
+						console.log('getSocketId', socketId);
+		            });
+
+		            //Get selection
+		            socket.on('getSelectionRange',  function(data) {
+
+		            	 for (var i = $scope.connectedClients.length - 1; i >= 0; i--) {
+
+		            	 	  if( $scope.connectedClients[i].socketId == data.socketId) {
+									
+			            	 	  		
+
+			            	 	  		console.log("aaaa")
+		            	 	  	break;
+		            	 	  }
+		            	 }
+		            });
+
+  				
+  				//Set selection
 				$scope.selectRange = function( event ) {
 
 					var selObj = window.getSelection();
@@ -134,17 +176,25 @@
 					var startOffsetContainer = selObj.getRangeAt(0).startContainer;
 					var endOffsetContainer = selObj.getRangeAt(0).endContainer;
 
-					// console.log('startOffset', startOffset);
-					// console.log('endOffset', endOffset);
-
 					var lineNumbers = getRowNumbers(startOffsetContainer, endOffsetContainer);
 
 					console.clear();
-					console.log('startLine', lineNumbers.start);
-					console.log('startOffset', startOffset);
-					console.log('endLine', lineNumbers.end);
-					console.log('endOffset', endOffset);
-				}
+					console.log('set startLine', lineNumbers.start);
+					console.log('set startOffset', startOffset);
+					console.log('set endLine', lineNumbers.end);
+					console.log('set endOffset', endOffset);
+
+					socket.emit('setSelectionRange', {
+
+					 	'color': 'green',
+					 	'startLine': lineNumbers.start, 
+						'startOffset': startOffset,
+						'endLine': lineNumbers.end, 
+						'endOffset': endOffset,
+						'socketId' : socketId,
+						'name' : $scope.name || 'Undefined'
+					 });
+					}
 
 			});
 

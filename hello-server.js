@@ -17,10 +17,8 @@ var io = require('socket.io').listen(app);
 
 var connectedClients = [];
 
-
-// Emit welcome message on connection
 io.on('connection', function(socket) {
-    
+
     //Add to clinets pool
     connectedClients.push( { socketId: socket.id } );
 
