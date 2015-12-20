@@ -104,7 +104,6 @@
 			var counter = 0, start =0, end = 0;
 			var container = document.querySelector( '[hello] div' );
 
-
 			for (var i = 0; i <container.childNodes.length; i++) {
 
 				//Skipt text nodes
@@ -189,7 +188,10 @@
 
 
 										//Set width
-										if( ii === startAt ) {
+										if( ii === startAt && ii === endsAt ) {	
+
+											$scope.lines[ii].selection.width = (endOffset-startOffset)+'px';
+										} else if( ii === startAt ) {
 
 											$scope.lines[ii].selection.width = (550-startOffset)+'px';
 										} else if( ii === endsAt ) {
@@ -212,7 +214,6 @@
 										} else {
 
 			            	 	  			$scope.lines[ii].selection.left = 0+'px';
-
 			            	 	  		}
 			            	 	  	};
 
@@ -252,13 +253,10 @@
 					);
 
 					console.clear();
-					// console.log('set startLine', lineNumbers.start);
-					// console.log('set startOffset', startOffset);
-					// console.log('set endLine', lineNumbers.end);
-					// console.log('set endOffset', endOffset);
-
-
-
+					console.log('set startLine', lineNumbers.start);
+					console.log('set startOffset', startOffset);
+					console.log('set endLine', lineNumbers.end);
+					console.log('set endOffset', endOffset);
 
 					socket.emit('setSelectionRange', {
 
@@ -270,7 +268,7 @@
 						'socketId' : socketId,
 						'name' : $scope.name || 'Undefined'
 					 });
-					}
+				}
 
 			});
 
