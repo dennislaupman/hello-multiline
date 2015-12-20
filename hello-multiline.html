@@ -22,13 +22,15 @@
 
 
 		#checkStartSelectionOffset,
+		#checkStartSelectionWidth,
 		#checkEndSelectionOffset {
-
+		
 			background: #ff00ff;
 			padding: 0;
 			margin: 0;
 			font-family: verdana;
 			font-size: 14px;
+		
 		}
 
 		.line {
@@ -88,8 +90,9 @@
 
 	</div>
 
-	<span id="checkStartSelectionOffset">q</span>
-	<span id="checkEndSelectionOffset">v</span>
+	<span id="checkStartSelectionOffset"></span>
+	<span id="checkStartSelectionWidth"></span>
+	<span id="checkEndSelectionOffset"></span>
 
 	<br />
 	<!-- dont remove br -->
@@ -240,28 +243,45 @@
 
 					var checkStartSelectionOffset = document.querySelector( '#checkStartSelectionOffset' );
 					var checkEndSelectionOffset = document.querySelector( '#checkEndSelectionOffset' );
+					
+
 
 					angular.element( checkStartSelectionOffset ).html(
 
 						startOffsetContainer.nodeValue.substring(0, startOffset) 
 					);
 
+					//Total line selection fix
+					if( !angular.element( endOffsetContainer.parentNode ).hasClass('content')) {
 
-					angular.element( checkEndSelectionOffset ).html(
+						angular.element( checkEndSelectionOffset ).html(
 
-						endOffsetContainer.nodeValue.substring(0, endOffset) 
-					);
+							startOffsetContainer.nodeValue
+						);
 
-					console.clear();
-					console.log('set startLine', lineNumbers.start);
-					console.log('set startOffset', startOffset);
-					console.log('set endLine', lineNumbers.end);
-					console.log('set endOffset', endOffset);
+						lineNumbers.end = lineNumbers.start;
+					} else {
+						
+						angular.element( checkEndSelectionOffset ).html(
+
+							endOffsetContainer.nodeValue.substring(0, endOffset) 
+						);
+
+					}
+
+				
+
+					// console.clear();
+					// console.log('set startLine', lineNumbers.start);
+					// console.log('set startOffset', startOffset);
+					// console.log('set endLine', lineNumbers.end);
+					// console.log('set endOffset', endOffset);
 
 					socket.emit('setSelectionRange', {
 
 					 	'color': 'green',
 					 	'startLine': lineNumbers.start, 
+				
 						'startOffset': checkStartSelectionOffset.offsetWidth,
 						'endLine': lineNumbers.end, 
 						'endOffset': checkEndSelectionOffset.offsetWidth,
