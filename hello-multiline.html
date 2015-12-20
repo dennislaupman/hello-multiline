@@ -18,13 +18,41 @@
 			font-family: verdana;
 			font-size: 14px;
 			line-height: 24px;
-
 		}
 
-		[hello] div {
+		.line {
 
-			/*background: #fff000;*/
+			height: 24px;
+			overflow: hidden;
 		}
+
+
+		.selection {
+
+			height:24px;
+			width: 100px;
+			background: #86be40;
+			opacity: 0.35;
+			position: relative;
+			z-index: 0;
+			top:-24px
+		}
+
+		.selection.blue {
+
+			background: #54bed3;
+		}
+
+		.selection.pink {
+
+			background: #f062a4;
+		}
+
+		.selection.yellow {
+
+			background: #ffd33a;
+		}
+
 		
 	</style>
 </head>
@@ -33,7 +61,14 @@
 	<div hello ng-click="selectRange()">
 
 		<div>
-			<div ng-repeat="line in lines">{{line}}</div>
+			<div class="line" ng-repeat="line in lines">
+				{{line}}
+				<div 
+				
+					class="selection {{selection.color}}" 
+					style="left:{{line.selection.left}}px; width:{{line.selection.width}}px;">
+				</div>
+			</div>
 		</div>
 
 	</div>
@@ -88,8 +123,7 @@
 					'publishing software zoals Aldus PageMaker die versies van Lorem',
 					'Ipsum bevatten.'		
   				];
-  				
-			
+  			
 				$scope.selectRange = function( event ) {
 
 					var selObj = window.getSelection();
