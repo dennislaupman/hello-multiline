@@ -24,18 +24,19 @@
 
 			height: 24px;
 			overflow: hidden;
+			position: relative;
 		}
 
 
 		.selection {
 
 			height:24px;
-			width: 100px;
+			width: 0;
 			background: #86be40;
 			opacity: 0.35;
-			position: relative;
+			position: absolute;
 			z-index: 0;
-			top:-24px
+			top:0;
 		}
 
 		.selection.blue {
@@ -62,11 +63,11 @@
 
 		<div>
 			<div class="line" ng-repeat="line in lines">
-				{{line}}
+				{{line.content}}
 				<div 
 				
 					class="selection {{selection.color}}" 
-					style="left:{{line.selection.left}}px; width:{{line.selection.width}}px;">
+					style="left:{{line.selection.left}}px; width:{{line.selection.width}};">
 				</div>
 			</div>
 		</div>
@@ -86,7 +87,7 @@
 			for (var i = 0; i <container.childNodes.length; i++) {
 
 				//Skipt text nodes
-				if(container.childNodes[i].nodeType === 3) {
+				if(container.childNodes[i].nodeType === 3 || container.childNodes[i].nodeType === 8) {
 
 					continue;
 				}
@@ -102,7 +103,6 @@
 					end = counter;
 				}
 
-
 				counter++;
 			};
 
@@ -113,15 +113,15 @@
   			app.controller('helloMultiLineCtrl', function( $scope, $timeout ) {
 
   				$scope.lines = [
-  					'Lorem Ipsum is slechts een proeftekst uit het drukkerij- en ',
-  					'zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze',
-  					'zethaak met letters nam en ze door elkaar husselde om een font-',
-					'catalogus te maken. Het heeft niet alleen vijf eeuwen overleefd maar is ',
-					'ook, vrijwel onveranderd, overgenomen in elektronische letterzetting. ',
-					'Het is in de jaren \'60 populair geworden met de introductie van Letraset ',
-					'vellen met Lorem Ipsum passages en meer recentelijk door desktop ',
-					'publishing software zoals Aldus PageMaker die versies van Lorem',
-					'Ipsum bevatten.'		
+  					{ content: 'Lorem Ipsum is slechts een proeftekst uit het drukkerij- en ' },
+  					{ content:'zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze' },
+  					{ content:'zethaak met letters nam en ze door elkaar husselde om een font-' },
+					{ content:'catalogus te maken. Het heeft niet alleen vijf eeuwen overleefd maar is ' },
+					{ content:'ook, vrijwel onveranderd, overgenomen in elektronische letterzetting. ' },
+					{ content:'Het is in de jaren \'60 populair geworden met de introductie van Letraset ' },
+					{ content:'vellen met Lorem Ipsum passages en meer recentelijk door desktop ' },
+					{ content:'publishing software zoals Aldus PageMaker die versies van Lorem' },
+					{ content:'Ipsum bevatten.' }	
   				];
 
   				//socket connection
@@ -155,13 +155,33 @@
 		            	 for (var i = $scope.connectedClients.length - 1; i >= 0; i--) {
 
 		            	 	  if( $scope.connectedClients[i].socketId == data.socketId) {
-									
-			            	 	  		
 
-			            	 	  		console.log("aaaa")
+			            	 	  	for (var ii = 0; ii < $scope.lines.length; ii++ ) {
+
+			            	 	  		//Declarations
+										$scope.lines[ii].selection = {};
+
+										var startAt = parseInt(data.startLine, 10),
+											endsAt = parseInt(data.endLine, 10);
+
+			            	 	  		if( ii >= startAt && ii <= endsAt ) {
+
+
+			            	 	  			$scope.lines[ii].selection.width = 100+'%';
+
+
+			            	 	  		} else {
+
+			            	 	  			$scope.lines[ii].selection.width = 0+'%';
+
+			            	 	  		}
+			            	 	  	};
+
 		            	 	  	break;
 		            	 	  }
 		            	 }
+
+		            	$scope.$apply();
 		            });
 
   				
