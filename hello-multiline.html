@@ -8,6 +8,8 @@
 		body {
 			margin: 0;
 			padding: 0; 
+
+			overflow: hidden;
 		}
 
 		[hello] {
@@ -22,7 +24,6 @@
 
 
 		#checkStartSelectionOffset,
-		#checkStartSelectionWidth,
 		#checkEndSelectionOffset {
 		
 			background: #ff00ff;
@@ -30,7 +31,13 @@
 			margin: 0;
 			font-family: verdana;
 			font-size: 14px;
-		
+			white-space: nowrap;
+			visibility: hidden;
+		}
+
+		#checkEndSelectionOffset {
+
+			background: #fff000;
 		}
 
 		.line {
@@ -91,7 +98,6 @@
 	</div>
 
 	<span id="checkStartSelectionOffset"></span>
-	<span id="checkStartSelectionWidth"></span>
 	<span id="checkEndSelectionOffset"></span>
 
 	<br />
@@ -136,15 +142,15 @@
   			app.controller('helloMultiLineCtrl', function( $scope, $timeout ) {
 
   				$scope.lines = [
-  					{ content: 'Lorem Ipsum is slechts een proeftekst uit het drukkerij- en ' },
-  					{ content:'zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze' },
-  					{ content:'zethaak met letters nam en ze door elkaar husselde om een font-' },
-					{ content:'catalogus te maken. Het heeft niet alleen vijf eeuwen overleefd maar is ' },
-					{ content:'ook, vrijwel onveranderd, overgenomen in elektronische letterzetting. ' },
-					{ content:'Het is in de jaren \'60 populair geworden met de introductie van Letraset ' },
-					{ content:'vellen met Lorem Ipsum passages en meer recentelijk door desktop ' },
-					{ content:'publishing software zoals Aldus PageMaker die versies van Lorem' },
-					{ content:'Ipsum bevatten.' }	
+  					{ content: 'Lorem Ipsum is slechts een proeftekst uit het drukkerij- en ', width:422 },
+  					{ content:'zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze', width:443 },
+  					{ content:'zethaak met letters nam en ze door elkaar husselde om een font-', width:463  },
+					{ content:'catalogus te maken. Het heeft niet alleen vijf eeuwen overleefd maar is ', width:510 },
+					{ content:'ook, vrijwel onveranderd, overgenomen in elektronische letterzetting. ', width:499 },
+					{ content:'Het is in de jaren \'60 populair geworden met de introductie van Letraset ', width:516 },
+					{ content:'vellen met Lorem Ipsum passages en meer recentelijk door desktop ', width:486 },
+					{ content:'publishing software zoals Aldus PageMaker die versies van Lorem' , width:462},
+					{ content:'Ipsum bevatten.', width:117 }	
   				];
 
   				//socket connection
@@ -175,6 +181,8 @@
 		            //Get selection
 		            socket.on('getSelectionRange',  function(data) {
 
+		            	var checkSelectionWidth = null;
+
 		            	 for (var i = $scope.connectedClients.length - 1; i >= 0; i--) {
 
 		            	 	  if( $scope.connectedClients[i].socketId == data.socketId) {
@@ -195,14 +203,14 @@
 
 											$scope.lines[ii].selection.width = (endOffset-startOffset)+'px';
 										} else if( ii === startAt ) {
-
-											$scope.lines[ii].selection.width = (550-startOffset)+'px';
+										
+											$scope.lines[ii].selection.width = ($scope.lines[ii].width-startOffset)+'px';
 										} else if( ii === endsAt ) {
 
 											$scope.lines[ii].selection.width = endOffset+'px';
 										} else if( ii >= startAt && ii <= endsAt ) {
 
-			            	 	  			$scope.lines[ii].selection.width = 100+'%';
+			            	 	  			$scope.lines[ii].selection.width = $scope.lines[ii].width+'px';
 
 			            	 	  		} else {
 
@@ -269,13 +277,11 @@
 
 					}
 
-				
-
-					// console.clear();
-					// console.log('set startLine', lineNumbers.start);
-					// console.log('set startOffset', startOffset);
-					// console.log('set endLine', lineNumbers.end);
-					// console.log('set endOffset', endOffset);
+					console.clear();
+					console.log('set startLine', lineNumbers.start);
+					console.log('set startOffset', startOffset);
+					console.log('set endLine', lineNumbers.end);
+					console.log('set endOffset', checkEndSelectionOffset.offsetWidth);
 
 					socket.emit('setSelectionRange', {
 
