@@ -20,6 +20,17 @@
 			line-height: 24px;
 		}
 
+
+		#checkStartSelectionOffset,
+		#checkEndSelectionOffset {
+
+			background: #ff00ff;
+			padding: 0;
+			margin: 0;
+			font-family: verdana;
+			font-size: 14px;
+		}
+
 		.line {
 
 			height: 24px;
@@ -76,6 +87,12 @@
 		</div>
 
 	</div>
+
+	<span id="checkStartSelectionOffset">q</span>
+	<span id="checkEndSelectionOffset">v</span>
+
+	<br />
+	<!-- dont remove br -->
 
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
 	<script src='/socket.io/socket.io.js'></script>
@@ -168,7 +185,7 @@
 										var startAt = parseInt(data.startLine, 10),
 											startOffset = parseInt(data.startOffset, 10),
 											endsAt = parseInt(data.endLine, 10),
-											endWidth = parseInt(data.endWidth, 10);
+											endOffset = parseInt(data.endOffset, 10);
 
 
 										//Set width
@@ -177,7 +194,7 @@
 											$scope.lines[ii].selection.width = (550-startOffset)+'px';
 										} else if( ii === endsAt ) {
 
-											$scope.lines[ii].selection.width = endWidth+'px';
+											$scope.lines[ii].selection.width = endOffset+'px';
 										} else if( ii >= startAt && ii <= endsAt ) {
 
 			            	 	  			$scope.lines[ii].selection.width = 100+'%';
@@ -220,19 +237,36 @@
 
 					var lineNumbers = getRowNumbers(startOffsetContainer, endOffsetContainer);
 
+					var checkStartSelectionOffset = document.querySelector( '#checkStartSelectionOffset' );
+					var checkEndSelectionOffset = document.querySelector( '#checkEndSelectionOffset' );
+
+					angular.element( checkStartSelectionOffset ).html(
+
+						startOffsetContainer.nodeValue.substring(0, startOffset) 
+					);
+
+
+					angular.element( checkEndSelectionOffset ).html(
+
+						endOffsetContainer.nodeValue.substring(0, endOffset) 
+					);
+
 					console.clear();
-					console.log('set startLine', lineNumbers.start);
-					console.log('set startOffset', startOffset);
-					console.log('set endLine', lineNumbers.end);
-					console.log('set endOffset', endOffset);
+					// console.log('set startLine', lineNumbers.start);
+					// console.log('set startOffset', startOffset);
+					// console.log('set endLine', lineNumbers.end);
+					// console.log('set endOffset', endOffset);
+
+
+
 
 					socket.emit('setSelectionRange', {
 
 					 	'color': 'green',
 					 	'startLine': lineNumbers.start, 
-						'startOffset': startOffset,
+						'startOffset': checkStartSelectionOffset.offsetWidth,
 						'endLine': lineNumbers.end, 
-						'endWidth': endOffset,
+						'endOffset': checkEndSelectionOffset.offsetWidth,
 						'socketId' : socketId,
 						'name' : $scope.name || 'Undefined'
 					 });
