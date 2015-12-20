@@ -27,8 +27,13 @@
 			position: relative;
 		}
 
+		.line .content {
 
-		.selection {
+			position: relative;
+			z-index: 2;
+		}
+
+		.line .selection {
 
 			height:24px;
 			width: 0;
@@ -62,12 +67,10 @@
 	<div hello ng-click="selectRange()">
 
 		<div>
-			<div class="line" ng-repeat="line in lines">
-				{{line.content}}
+			<div class="line" ng-repeat="line in lines"><div class="content">{{line.content}}</div>
 				<div 
-				
 					class="selection {{selection.color}}" 
-					style="left:{{line.selection.left}}px; width:{{line.selection.width}};">
+					style="left:{{line.selection.left}}; width:{{line.selection.width}};">
 				</div>
 			</div>
 		</div>
@@ -84,6 +87,7 @@
 			var counter = 0, start =0, end = 0;
 			var container = document.querySelector( '[hello] div' );
 
+
 			for (var i = 0; i <container.childNodes.length; i++) {
 
 				//Skipt text nodes
@@ -93,12 +97,12 @@
 				}
 
 				//Get start line
-				if( container.childNodes[i] == startContainer.parentNode ) {
+				if( container.childNodes[i].firstChild == startContainer.parentNode ) {
 
 					start = counter;
 				}
 				//Get end line
-				if( container.childNodes[i] == endContainer.parentNode ) {
+				if( container.childNodes[i].firstChild == endContainer.parentNode ) {
 
 					end = counter;
 				}
@@ -162,17 +166,35 @@
 										$scope.lines[ii].selection = {};
 
 										var startAt = parseInt(data.startLine, 10),
-											endsAt = parseInt(data.endLine, 10);
+											startOffset = parseInt(data.startOffset, 10),
+											endsAt = parseInt(data.endLine, 10),
+											endWidth = parseInt(data.endWidth, 10);
 
-			            	 	  		if( ii >= startAt && ii <= endsAt ) {
 
+										//Set width
+										if( ii === startAt ) {
+
+											$scope.lines[ii].selection.width = (550-startOffset)+'px';
+										} else if( ii === endsAt ) {
+
+											$scope.lines[ii].selection.width = endWidth+'px';
+										} else if( ii >= startAt && ii <= endsAt ) {
 
 			            	 	  			$scope.lines[ii].selection.width = 100+'%';
-
 
 			            	 	  		} else {
 
 			            	 	  			$scope.lines[ii].selection.width = 0+'%';
+
+			            	 	  		}
+
+			            	 	  		//Set startOffset
+			            	 	  		if( ii === startAt ) {
+
+			            	 	  			$scope.lines[ii].selection.left = startOffset+'px';
+										} else {
+
+			            	 	  			$scope.lines[ii].selection.left = 0+'px';
 
 			            	 	  		}
 			            	 	  	};
@@ -210,7 +232,7 @@
 					 	'startLine': lineNumbers.start, 
 						'startOffset': startOffset,
 						'endLine': lineNumbers.end, 
-						'endOffset': endOffset,
+						'endWidth': endOffset,
 						'socketId' : socketId,
 						'name' : $scope.name || 'Undefined'
 					 });
