@@ -203,9 +203,6 @@
 						
 		            	 	if( $scope.connectedClients[i].socketId == data.socketId) {
 
-		            	 		data.show = true;
-								$scope.connectedClients[i] = data;
-
 		            	 	  	for (var ii = 0; ii < $scope.lines.length; ii++ ) {
 
 		            	 	  		//Declarations
@@ -219,13 +216,10 @@
 		            	 	  			
 		            	 	  		}
 
-		            	
-								
 									var startAt = parseInt(data.startLine, 10),
 										startOffset = parseInt(data.startOffset, 10),
 										endsAt = parseInt(data.endLine, 10),
 										endOffset = parseInt(data.endOffset, 10);
-
 	
 									//Set width
 									if( ii === startAt && ii === endsAt ) {	
@@ -243,8 +237,6 @@
 
 		            	 	  		} else {
 
-
-
 		            	 	  			$scope.lines[ii].selection[i].width = 0+'%';
 		            	 	  		}
 
@@ -257,6 +249,8 @@
 		            	 	  			$scope.lines[ii].selection[i].left = 0+'px';
 		            	 	  		}
 
+
+									$scope.lines[ii].selection[i].color = data.color;
 		            	 	  	};
 
 							$scope.$apply();
