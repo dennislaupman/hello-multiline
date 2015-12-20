@@ -79,10 +79,128 @@
 			background: #ffd33a;
 		}
 
+
+		.cursor {
+		opacity: 0;
+	    left: 309px;
+	    top: 43px;
+	    cursor: text;
+	    position: absolute;
+	    z-index: 24;
+	    font: normal 13px arial,sans-serif;
+		}
+
+		.cursor .cursor-caret {
+
+			border-left: 2px solid;
+			border-color: #86be40;
+		    height: 13.6px;
+		    position: absolute;
+		    width: 0px;
+		    font-size: 0;
+		}
+
+		.cursor.green,
+		.cursor.blue,
+		.cursor.pink,
+		.cursor.yellow {
+
+			opacity: 1;
+		}
+
+		.cursor.blue  .cursor-caret {
+
+			border-color: #54bed3;
+		}
+
+		.cursor.pink  .cursor-caret {
+
+			border-color: #f062a4;
+		}
+
+		.cursor.yellow  .cursor-caret {
+
+			border-color: #ffd33a;
+		}
+
+
+		.cursor .cursor-top {
+		    opacity: 1;
+		    background-color: #86be40;
+		    position: absolute;
+		    width: 6px;
+		    left: -2px;
+		    top: -2px;
+		    height: 6px;
+		    font-size: 0;
+		}
+
+
+		.cursor.blue  .cursor-top {
+
+			background-color: #54bed3;
+		}
+
+		.cursor.pink  .cursor-top {
+
+			background-color: #f062a4;
+		}
+
+		.cursor.yellow  .cursor-top {
+
+			background-color: #ffd33a;
+		}
+
+
+		.cursor .cursor-name {
+		
+			opacity: 0;
+		  
+		    background-color: #86be40;
+		    position: absolute;
+		    font-size: 10px;
+		    color: #fff;
+		    top: -14px;
+		    left: -2px;
+		    padding: 2px;
+		    white-space: nowrap;
+		    transition: 0.3s opacity linear;
+		}
+
+		.cursor .cursor-name.show {
+
+			opacity: 1;
+		}
+
+		.cursor.blue  .cursor-name {
+
+			background: #54bed3;
+		}
+
+		.cursor.pink  .cursor-name {
+
+			background: #f062a4;
+		}
+
+		.cursor.yellow  .cursor-name {
+
+			background: #ffd33a;
+		}
+
+
+
 		
 	</style>
 </head>
 <body  ng-controller="helloMultiLineCtrl">
+
+
+	<div ng-repeat="caret in connectedClients" class="cursor {{caret.color}}"  style="left:{{caret.endOffset + 9}}px; top:{{((caret.endLine+1)*24)-10}}px; ">
+		<div class="cursor-caret"></div>
+		<div class="cursor-top"></div>
+		<div ng-class="[{ 'show' : caret.show==true }]" class="cursor-name">{{caret.name || 'Untitled'}}</div>
+	</div>
+
 
 	<div hello ng-click="selectRange()">
 
@@ -200,8 +318,24 @@
 
 		            	for (var i = $scope.connectedClients.length - 1; i >= 0; i--) {
 
-						
+
 		            	 	if( $scope.connectedClients[i].socketId == data.socketId) {
+
+								//Caret
+								data.caretPosition = parseInt(data.left, 10) + parseInt(data.width, 10) + 9;
+								data.show = true;
+		            	 	
+	            	 	  		if(timers[i]) {
+
+	            	 	  			$timeout.cancel(timers[i]);
+	            	 	  		}
+
+								timers[i] = $timeout( function() {
+
+									data.show = false;
+								}, 2500);
+
+								$scope.connectedClients[i] = data;
 
 		            	 	  	for (var ii = 0; ii < $scope.lines.length; ii++ ) {
 
@@ -248,7 +382,6 @@
 
 		            	 	  			$scope.lines[ii].selection[i].left = 0+'px';
 		            	 	  		}
-
 
 									$scope.lines[ii].selection[i].color = data.color;
 		            	 	  	};
